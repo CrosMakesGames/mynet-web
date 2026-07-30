@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyNet VPN — Your Private Network. Anywhere.</title>
+    <meta name="description" content="MyNet is a zero-config, LAN-style virtual networking tool that securely connects devices across NATs and firewalls.">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: #111827;
+            --bg-card-hover: #1e293b;
+            --bg-code: #030712;
+            --border-color: #1f293d;
+            --border-highlight: #334155;
+            --primary: #0ea5e9;
+            --primary-hover: #0284c7;
+            --accent: #38bdf8;
+            --accent-purple: #818cf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dark: #64748b;
+            --success: #10b981;
+            --radius: 12px;
+            --radius-sm: 6px;
+            --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            --transition: all 0.2s ease-in-out;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html {
+            scroll-behavior: smooth;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        body { overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
+        a { color: var(--accent); text-decoration: none; transition: var(--transition); }
+        a:hover { color: #7dd3fc; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; width: 100%; }
+        .container-narrow { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; width: 100%; }
+
+        h1, h2, h3, h4 { color: var(--text-main); font-weight: 700; line-height: 1.2; }
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* Navigation */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(12px);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .nav-wrapper { display: flex; align-items: center; justify-content: space-between; height: 70px; }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 1.35rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+        .logo svg { width: 32px; height: 32px; color: var(--primary); }
+        .nav-links { display: flex; align-items: center; gap: 1.5rem; list-style: none; }
+        .nav-links a { color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
+        .nav-links a:hover { color: var(--text-main); }
+        .nav-btn {
+            background: rgba(14, 165, 233, 0.1); color: var(--accent);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            padding: 0.5rem 1rem; border-radius: var(--radius-sm);
+            font-weight: 600; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .nav-btn:hover { background: rgba(14, 165, 233, 0.2); color: #fff; border-color: var(--accent); }
+
+        /* Hero */
+        .hero { padding: 5rem 0 4rem; text-align: center; position: relative; }
+        .hero::before {
+            content: ''; position: absolute; top: 20%; left: 50%;
+            transform: translate(-50%, -50%); width: 600px; height: 300px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, rgba(11, 15, 25, 0) 70%);
+            z-index: -1; pointer-events: none;
+        }
+        .badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.25);
+            color: var(--accent); padding: 0.35rem 1rem; border-radius: 50px;
+            font-size: 0.85rem; font-weight: 600; margin-bottom: 1.5rem;
+        }
+        .badge-dot { width: 8px; height: 8px; background-color: var(--success); border-radius: 50%; display: inline-block; box-shadow: 0 0 8px var(--success); }
+        .hero h1 { font-size: 3.5rem; letter-spacing: -1.5px; margin-bottom: 1rem; }
+        .hero p.tagline { font-size: 1.35rem; color: var(--text-muted); max-width: 680px; margin: 0 auto 2.5rem; }
+        .hero-cta { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 3.5rem; }
+
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 0.85rem 1.75rem; border-radius: var(--radius-sm);
+            font-weight: 600; font-size: 1rem; cursor: pointer; transition: var(--transition); border: none;
+        }
+        .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, #0284c7 100%); color: #fff; box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35); }
+        .btn-primary:hover { background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%); color: #fff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14, 165, 233, 0.45); }
+        .btn-secondary { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background: var(--bg-card-hover); border-color: var(--border-highlight); color: #fff; transform: translateY(-2px); }
+
+        /* Terminal */
+        .terminal-preview { max-width: 750px; margin: 0 auto; background: var(--bg-code); border: 1px solid var(--border-color); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; text-align: left; }
+        .terminal-header { background: #111827; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-color); }
+        .term-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .term-dot.red { background-color: #ef4444; } .term-dot.yellow { background-color: #f59e0b; } .term-dot.green { background-color: #10b981; }
+        .term-title { margin-left: 8px; font-size: 0.8rem; color: var(--text-dark); font-family: monospace; }
+        .terminal-body { padding: 1.25rem 1.5rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.9rem; color: #e2e8f0; line-height: 1.7; }
+        .term-cmd { color: var(--accent); font-weight: 600; }
+        .term-success { color: var(--success); }
+        .term-info { color: #60a5fa; }
+        .term-highlight { color: #facc15; font-weight: bold; }
+
+        /* Sections */
+        section { padding: 4.5rem 0; border-bottom: 1px solid var(--border-color); }
+        .section-header { text-align: center; margin-bottom: 3rem; }
+        .section-header h2 { font-size: 2.25rem; margin-bottom: 0.75rem; }
+        .section-header p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+        /* Features */
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+        .feature-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 2rem; transition: var(--transition); }
+        .feature-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 12px 24px -10px rgba(14, 165, 233, 0.15); }
+        .feature-icon { width: 48px; height: 48px; background: rgba(14, 165, 233, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent); margin-bottom: 1.25rem; }
+        .feature-icon svg { width: 24px; height: 24px; }
+        .feature-card h3 { font-size: 1.15rem; margin-bottom: 0.5rem; }
+        .feature-card p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* Quick Start Tabs */
+        .qs-tabs-container { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); overflow: hidden; max-width: 850px; margin: 0 auto; }
+        .qs-tabs { display: flex; border-bottom: 1px solid var(--border-color); }
+        .tab-btn { flex: 1; background: transparent; border: none; color: var(--text-muted); padding: 1rem 1.5rem; font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 10px; border-bottom: 2px solid transparent; }
+        .tab-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.02); }
+        .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(14, 165, 233, 0.05); }
+        .tab-content { padding: 2.5rem; display: none; }
+        .tab-content.active { display: block; }
+        .steps-list { display: flex; flex-direction: column; gap: 1.75rem; }
+        .step-item { display: flex; gap: 1.25rem; align-items: flex-start; }
+        .step-number { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary) 0%, #0284c7 100%); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+        .step-details { flex: 1; }
+        .step-details h4 { font-size: 1.1rem; margin-bottom: 0.35rem; }
+        .step-details p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.5rem; }
+
+        /* Code blocks */
+        .code-block { background: var(--bg-code); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.85rem 1.1rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.9rem; color: #e2e8f0; display: flex; align-items: center; justify-content: space-between; overflow-x: auto; margin-top: 0.5rem; }
+        .code-block code { font-family: inherit; }
+        .copy-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; transition: var(--transition); margin-left: 12px; flex-shrink: 0; }
+        .copy-btn:hover { color: var(--text-main); border-color: var(--border-highlight); background: rgba(255, 255, 255, 0.05); }
+
+        /* Tutorials */
+        .tutorials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem; }
+        @media (max-width: 600px) { .tutorials-grid { grid-template-columns: 1fr; } }
+        .tutorial-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 2rem; display: flex; flex-direction: column; }
+        .tutorial-card h3 { font-size: 1.25rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 10px; }
+        .tutorial-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.25rem; }
+        .tutorial-steps { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+        .tutorial-steps li { font-size: 0.9rem; color: var(--text-main); }
+        .tutorial-steps li strong { color: var(--accent); display: block; margin-bottom: 4px; }
+
+        /* Relay Guide (merged relay guide) */
+        .relay-guide-content { display: flex; flex-direction: column; gap: 2.5rem; max-width: 900px; margin: 0 auto; }
+        .guide-section { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 2.25rem; }
+        .guide-section h3 { font-size: 1.4rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; }
+        .guide-section h3 svg { color: var(--accent); flex-shrink: 0; }
+        .guide-section p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem; }
+        .guide-section p strong { color: var(--text-main); }
+
+        .prereq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .prereq-item { background: rgba(3, 7, 18, 0.4); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1rem; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 0.9rem; }
+        .prereq-item svg { color: var(--success); flex-shrink: 0; }
+
+        .config-table-wrapper { overflow-x: auto; margin-top: 1rem; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        th, td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border-color); }
+        th { background: rgba(3, 7, 18, 0.6); color: var(--text-main); font-weight: 600; }
+        td code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: var(--bg-code); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; }
+
+        .notice-box { background: rgba(14, 165, 233, 0.08); border-left: 4px solid var(--primary); padding: 1rem 1.25rem; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; margin: 1.25rem 0; font-size: 0.95rem; color: #e2e8f0; }
+        .notice-box code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: var(--bg-code); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; }
+
+        /* Tutorial Jump Table */
+        .jump-table-wrapper { max-width: 800px; margin: 2.5rem auto 0; overflow-x: auto; }
+        .jump-table-wrapper h3 { text-align: center; font-size: 1.3rem; margin-bottom: 1rem; }
+        .jump-table { width: 100%; border-collapse: collapse; }
+        .jump-table th { background: rgba(3, 7, 18, 0.6); color: var(--text-main); font-weight: 600; padding: 0.75rem 1rem; border-bottom: 2px solid var(--border-highlight); text-align: left; font-size: 0.9rem; }
+        .jump-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
+        .jump-table tr:hover td { background: rgba(14, 165, 233, 0.05); }
+        .jump-table .jump-link { color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .jump-table .jump-link:hover { color: #7dd3fc; }
+        .jump-table .jump-desc { color: var(--text-muted); }
+
+        /* Downloads */
+        .downloads-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.75rem; max-width: 1000px; margin: 0 auto; }
+        .download-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 2.25rem; text-align: center; display: flex; flex-direction: column; align-items: center; transition: var(--transition); }
+        .download-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+        .download-card .platform-icon { width: 56px; height: 56px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent); margin-bottom: 1.25rem; }
+        .download-card .platform-icon svg { width: 30px; height: 30px; }
+        .download-card h3 { font-size: 1.35rem; margin-bottom: 0.5rem; }
+        .download-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.75rem; flex-grow: 1; }
+        .download-card .btn { width: 100%; }
+
+        /* Footer */
+        footer { background: #070a12; border-top: 1px solid var(--border-color); padding: 3.5rem 0 2rem; margin-top: auto; }
+        .footer-content { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2.5rem; margin-bottom: 2.5rem; }
+        .footer-brand { max-width: 380px; }
+        .footer-brand p { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.75rem; }
+        .footer-relay-info { background: var(--bg-card); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-sm); font-size: 0.85rem; }
+        .footer-relay-info h4 { font-size: 0.9rem; color: var(--accent); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 6px; }
+        .footer-relay-info code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: var(--bg-code); padding: 2px 6px; border-radius: 4px; color: #e2e8f0; }
+        .footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; font-size: 0.85rem; color: var(--text-dark); }
+        .footer-links { display: flex; gap: 1.5rem; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero p.tagline { font-size: 1.1rem; }
+            .footer-content { flex-direction: column; }
+            .tab-content { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-wrapper">
+            <a href="#" class="logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                <span>MyNet</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#downloads">Downloads</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#quickstart">Quick Start</a></li>
+                <li><a href="#tutorials">Tutorials</a></li>
+                <li><a href="#relay-setup">Relay Setup</a></li>
+            </ul>
+            <a href="https://github.com/crosmakesgames/mynet" target="_blank" rel="noopener" class="nav-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                GitHub
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>Your private network. <span class="gradient-text">Anywhere.</span></h1>
+            <p class="tagline">Connect devices behind NATs, CGNAT, and firewalls in seconds. Secure LAN-style networking for gaming, SSH, and remote access without complex port forwarding.</p>
+            <div class="hero-cta">
+                <a href="#quickstart" class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    Get Started
+                </a>
+                <a href="https://github.com/crosmakesgames/mynet" target="_blank" rel="noopener" class="btn btn-secondary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                    View on GitHub
+                </a>
+            </div>
+            <div class="terminal-preview">
+                <div class="terminal-header">
+                    <span class="term-dot red"></span><span class="term-dot yellow"></span><span class="term-dot green"></span>
+                    <span class="term-title">mynet — bash — 80x24</span>
+                </div>
+                <div class="terminal-body">
+                    <div><span class="term-cmd">$ mynet host relay</span></div>
+                    <div><span class="term-info">[+]</span> Connecting to default relay (relay-na1.crosmakesgames.com:8443)...</div>
+                    <div><span class="term-success">[+]</span> Network created successfully!</div>
+                    <div><span class="term-info">[+]</span> Assigned VPN IP: <span class="term-highlight">100.64.0.1</span></div>
+                    <div><span class="term-success">[+] Your Network Code:</span> <span class="term-highlight">ABC123</span></div>
+                    <div><span class="term-info">[!]</span> Share code 'ABC123' with devices you want to connect. Listening for peers...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Downloads -->
+    <section id="downloads">
+        <div class="container">
+            <div class="section-header">
+                <h2>Download MyNet</h2>
+                <p>Available as a full unified package or open-source repository.</p>
+            </div>
+            <div class="downloads-grid">
+                <div class="download-card">
+                    <div class="platform-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg></div>
+                    <h3>Linux Package</h3>
+                    <p>Includes Linux x86_64 binaries, shell installer scripts (<code>install-linux.sh</code>), systemd service integrators, and portable executables.</p>
+                    <a href="https://github.com/crosmakesgames/mynet/releases" class="btn btn-secondary">Download mynet-full.zip</a>
+                </div>
+                <div class="download-card">
+                    <div class="platform-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 12h18"></path><path d="M12 3v18"></path></svg></div>
+                    <h3>Windows Package</h3>
+                    <p>Includes Windows GUI Setup Wizard (<code>MyNet-Setup.exe</code>), PowerShell installer script (<code>install-windows.ps1</code>), WinTun drivers, and executables.</p>
+                    <a href="https://github.com/crosmakesgames/mynet/releases" class="btn btn-secondary">Download mynet-full.zip</a>
+                </div>
+                <div class="download-card">
+                    <div class="platform-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6"></path><path d="M8 6l-6 6 6 6"></path></svg></div>
+                    <h3>Source Code</h3>
+                    <p>Full Go source code, build scripts, installer templates, and documentation. Clone and build with <code>go build ./cmd/mynet</code>.</p>
+                    <a href="https://github.com/crosmakesgames/mynet" target="_blank" rel="noopener" class="btn btn-secondary">View on GitHub</a>
+                </div>
+            </div>
+
+            <!-- Tutorial Jump Table -->
+            <div class="jump-table-wrapper">
+                <h3>Jump to a Tutorial or Section</h3>
+                <table class="jump-table">
+                    <thead>
+                        <tr><th>Section</th><th>Description</th><th>Jump</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Quick Start Guide</td><td>Host or join a network in 30 seconds</td><td><a href="#quickstart" class="jump-link">&#8594; Go</a></td></tr>
+                        <tr><td>First Network Tutorial</td><td>Connect two devices across different networks</td><td><a href="#tutorial-first-network" class="jump-link">&#8594; Go</a></td></tr>
+                        <tr><td>System Service Setup</td><td>Auto-start MyNet on boot (Linux + Windows)</td><td><a href="#tutorial-service" class="jump-link">&#8594; Go</a></td></tr>
+                        <tr><td>Silent &amp; Automated Deployment</td><td>Non-interactive install for headless servers and CI</td><td><a href="#tutorial-silent-deploy" class="jump-link">&#8594; Go</a></td></tr>
+                        <tr><td>Relay Server Setup</td><td>Deploy your own private relay on a Linux VPS</td><td><a href="#relay-setup" class="jump-link">&#8594; Go</a></td></tr>
+                        <tr><td>Relay Prerequisites</td><td>What you need to run a relay server</td><td><a href="#relay-prereqs" class="jump-link">&#8594; Go</a></td></tr>
+                        <tr><td>Relay Quick Setup</td><td>Automated setup with setup-relay.sh</td><td><a href="#relay-quick-setup" class="jump-link">&#8594; Go</a></td></tr>
+                        <tr><td>Relay Manual Installation</td><td>Step-by-step manual install without the script</td><td><a href="#relay-manual" class="jump-link">&#8594; Go</a></td></tr>
+                        <tr><td>Relay Configuration</td><td>CLI flags and parameters table</td><td><a href="#relay-config" class="jump-link">&#8594; Go</a></td></tr>
+                        <tr><td>Relay Firewall Setup</td><td>UFW and firewalld rules for relay ports</td><td><a href="#relay-firewall" class="jump-link">&#8594; Go</a></td></tr>
+                        <tr><td>Relay systemd Management</td><td>Install, start, stop, and uninstall the relay service</td><td><a href="#relay-systemd" class="jump-link">&#8594; Go</a></td></tr>
+                        <tr><td>Connecting to Custom Relay</td><td>How clients connect to your private relay</td><td><a href="#relay-connecting" class="jump-link">&#8594; Go</a></td></tr>
+                        <tr><td>Downloads</td><td>Get MyNet for Linux, Windows, or source</td><td><a href="#downloads" class="jump-link">&#8594; Go</a></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Engineered for Effortless Connectivity</h2>
+                <p>Powerful virtual private networking built with Go, designed for speed, security, and simplicity.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+                    <h3>Zero-Config Relay</h3>
+                    <p>Default relay routing connects devices behind double NAT, CGNAT, and strict firewalls out of the box with zero port forwarding required.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+                    <h3>End-to-End Encrypted Tunnels</h3>
+                    <p>Encrypted control and data tunneling utilizing WinTun on Windows and native TUN devices on Linux with stateful tracking.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></div>
+                    <h3>Cross-Platform</h3>
+                    <p>Native binaries for Linux and Windows. Includes GUI installation wizards, PowerShell CLI utilities, and system service managers.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg></div>
+                    <h3>Self-Hostable Relay</h3>
+                    <p>Deploy your own relay server on any VPS with configurable network limits and complete privacy control whenever you want.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start -->
+    <section id="quickstart">
+        <div class="container">
+            <div class="section-header">
+                <h2>Quick Start Guide</h2>
+                <p>Host or join a virtual network in less than 30 seconds.</p>
+            </div>
+            <div class="qs-tabs-container">
+                <div class="qs-tabs">
+                    <button class="tab-btn active" onclick="switchTab('host')">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+                        I want to host a network
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('join')">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"></path><path d="M10 14L21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
+                        I want to join a network
+                    </button>
+                </div>
+                <div id="tab-host" class="tab-content active">
+                    <div class="steps-list">
+                        <div class="step-item"><div class="step-number">1</div><div class="step-details"><h4>Download and Install MyNet</h4><p>Download the MyNet package and run the installation script or wizard for your OS.</p><div class="code-block"><code>sudo ./install-linux.sh &nbsp; # Linux<br>.\install-windows.ps1 &nbsp;# Windows PowerShell</code><button class="copy-btn" onclick="copyCode('sudo ./install-linux.sh')">Copy</button></div></div></div>
+                        <div class="step-item"><div class="step-number">2</div><div class="step-details"><h4>Start Hosting via Relay Mode</h4><p>Run the host command. MyNet connects to the default relay server automatically.</p><div class="code-block"><code>mynet host relay</code><button class="copy-btn" onclick="copyCode('mynet host relay')">Copy</button></div></div></div>
+                        <div class="step-item"><div class="step-number">3</div><div class="step-details"><h4>Share the 6-Digit Code</h4><p>MyNet generates a unique join code (e.g. <code>ABC123</code>). Share it with your friends or other devices to establish connection.</p></div></div>
+                    </div>
+                </div>
+                <div id="tab-join" class="tab-content">
+                    <div class="steps-list">
+                        <div class="step-item"><div class="step-number">1</div><div class="step-details"><h4>Download and Install MyNet</h4><p>Ensure MyNet is installed on the client machine.</p><div class="code-block"><code>sudo ./install-linux.sh &nbsp; # Linux<br>.\install-windows.ps1 &nbsp;# Windows PowerShell</code><button class="copy-btn" onclick="copyCode('sudo ./install-linux.sh')">Copy</button></div></div></div>
+                        <div class="step-item"><div class="step-number">2</div><div class="step-details"><h4>Join with a Network Code</h4><p>Use the 6-digit code provided by the host. MyNet connects through the default relay automatically.</p><div class="code-block"><code>mynet join relay ABC123</code><button class="copy-btn" onclick="copyCode('mynet join relay ABC123')">Copy</button></div></div></div>
+                        <div class="step-item"><div class="step-number">3</div><div class="step-details"><h4>You're Connected!</h4><p>You now have a virtual LAN IP. Ping other devices, access shared resources, and communicate as if on the same network.</p><div class="code-block"><code>mynet devices<br>mynet ping 100.64.0.1</code><button class="copy-btn" onclick="copyCode('mynet devices')">Copy</button></div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tutorials -->
+    <section id="tutorials">
+        <div class="container">
+            <div class="section-header">
+                <h2>Tutorials &amp; Detailed Guides</h2>
+                <p>Step-by-step instructions for everyday usage, system service configuration, and automation.</p>
+            </div>
+            <div class="tutorials-grid">
+                <div class="tutorial-card" id="tutorial-first-network">
+                    <div>
+                        <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>1. Setting Up Your First Network</h3>
+                        <p>Connect two devices together across different networks using the default relay.</p>
+                        <ul class="tutorial-steps">
+                            <li><strong>Host Machine:</strong>Initialize hosting and generate code:<div class="code-block"><code>mynet host relay</code><button class="copy-btn" onclick="copyCode('mynet host relay')">Copy</button></div></li>
+                            <li><strong>Client Machine:</strong>Join the host's room with the code:<div class="code-block"><code>mynet join relay ABC123</code><button class="copy-btn" onclick="copyCode('mynet join relay ABC123')">Copy</button></div></li>
+                            <li><strong>Verify Connection:</strong>Check active peers and connectivity:<div class="code-block"><code>mynet devices<br>mynet ping 100.64.0.1</code><button class="copy-btn" onclick="copyCode('mynet devices')">Copy</button></div></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tutorial-card" id="tutorial-service">
+                    <div>
+                        <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3z"></path><path d="M6 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3z"></path></svg>2. Installing as a System Service</h3>
+                        <p>Keep MyNet running automatically in the background on startup for continuous connectivity.</p>
+                        <ul class="tutorial-steps">
+                            <li><strong>Linux (systemd service):</strong><div class="code-block"><code>sudo mynet install</code><button class="copy-btn" onclick="copyCode('sudo mynet install')">Copy</button></div></li>
+                            <li><strong>Windows (Background Service):</strong><div class="code-block"><code>mynet install<br># Or via PowerShell script:<br>.\install-windows.ps1 -Service</code><button class="copy-btn" onclick="copyCode('mynet install')">Copy</button></div></li>
+                            <li><strong>Manage Service:</strong>Check background service status anytime:<div class="code-block"><code>mynet status</code><button class="copy-btn" onclick="copyCode('mynet status')">Copy</button></div></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tutorial-card" id="tutorial-silent-deploy" style="grid-column: 1 / -1;">
+                    <div>
+                        <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>3. Silent &amp; Automated Deployment</h3>
+                        <p>Deploy MyNet non-interactively across headless servers, automated scripts, or CI pipelines.</p>
+                        <ul class="tutorial-steps">
+                            <li><strong>Linux Non-Interactive Install:</strong>Use installer flags to skip prompts and accept defaults:<div class="code-block"><code>sudo ./install-linux.sh --quiet --yes</code><button class="copy-btn" onclick="copyCode('sudo ./install-linux.sh --quiet --yes')">Copy</button></div></li>
+                            <li><strong>Windows Silent PowerShell Deployment:</strong><div class="code-block"><code>.\install-windows.ps1 -Silent -Service -Desktop</code><button class="copy-btn" onclick="copyCode('.\install-windows.ps1 -Silent -Service -Desktop')">Copy</button></div></li>
+                            <li><strong>Run Quiet Host/Join Mode:</strong>Suppress terminal confirmation prompts when starting MyNet:<div class="code-block"><code>mynet host relay --quiet --daemon</code><button class="copy-btn" onclick="copyCode('mynet host relay --quiet --daemon')">Copy</button></div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Relay Server Setup Guide -->
+    <section id="relay-setup">
+        <div class="container-narrow">
+            <div class="section-header">
+                <h2>Running a <span class="gradient-text">MyNet Relay Server</span></h2>
+                <p>Complete administrator guide for deploying, configuring, and managing a dedicated self-hosted MyNet relay server on a machine.</p>
+            </div>
+            <div class="relay-guide-content">
+                <!-- Prerequisites -->
+                <div class="guide-section" id="relay-prereqs">
+                    <h3><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>1. Prerequisites</h3>
+                    <p>To run your own MyNet relay server, ensure your hosting environment meets the following requirements:</p>
+                    <div class="prereq-grid">
+                        <div class="prereq-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Public IPv4 Address and high-uptime</span></div>
+                        <div class="prereq-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Root or sudo privileges on a Linux server</span></div>
+                        <div class="prereq-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>TCP Port 8443 &amp; UDP Port 8444 open from your router</span></div>
+                    </div>
+                </div>
+                <!-- Quick Setup -->
+                <div class="guide-section" id="relay-quick-setup">
+                    <h3><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>2. Quick Setup (Automated Script)</h3>
+                    <p>The fastest way to deploy a relay server is using the included <code>setup-relay.sh</code> script. It automatically copies binaries, sets permissions, configures systemd, and sets firewall rules.</p>
+                    <p><strong>Interactive Setup:</strong></p>
+                    <div class="code-block"><code>sudo ./setup-relay.sh</code><button class="copy-btn" onclick="copyCode('sudo ./setup-relay.sh')">Copy</button></div>
+                    <p><strong>Automated / Silent Setup:</strong></p>
+                    <div class="code-block"><code>sudo ./setup-relay.sh --quiet</code><button class="copy-btn" onclick="copyCode('sudo ./setup-relay.sh --quiet')">Copy</button></div>
+                </div>
+                <!-- Manual Setup -->
+                <div class="guide-section" id="relay-manual">
+                    <h3><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>3. Manual Installation</h3>
+                    <p>If you prefer installing without the automated setup script, follow these step-by-step instructions:</p>
+                    <p><strong>Step 1: Install Binary</strong> — Copy the <code>mynet-relay</code> executable to your system path and grant execution permissions:</p>
+                    <div class="code-block"><code>sudo cp bin/mynet-relay /usr/local/bin/mynet-relay<br>sudo chmod +x /usr/local/bin/mynet-relay</code><button class="copy-btn" onclick="copyCode('sudo cp bin/mynet-relay /usr/local/bin/mynet-relay && sudo chmod +x /usr/local/bin/mynet-relay')">Copy</button></div>
+                    <p><strong>Step 2: Test Execution</strong> — Run the relay server directly in the foreground to verify functionality:</p>
+                    <div class="code-block"><code>mynet-relay host 50</code><button class="copy-btn" onclick="copyCode('mynet-relay host 50')">Copy</button></div>
+                </div>
+                <!-- Configuration -->
+                <div class="guide-section" id="relay-config">
+                    <h3><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>4. Configuration &amp; CLI Parameters</h3>
+                    <p>Customize listen addresses, maximum hosted networks, and background execution options using CLI flags.</p>
+                    <div class="config-table-wrapper">
+                        <table>
+                            <thead><tr><th>Parameter / Flag</th><th>Description</th><th>Default</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>max-networks</code></td><td>Maximum concurrent virtual networks permitted on this relay.</td><td><code>50</code></td></tr>
+                                <tr><td><code>--addr &lt;addr&gt;</code></td><td>Network interface IP address to bind to.</td><td><code>0.0.0.0</code></td></tr>
+                                <tr><td><code>--port &lt;port&gt;</code></td><td>TCP port for control signaling and handshake tunnels.</td><td><code>8443</code></td></tr>
+                                <tr><td><code>--data-port &lt;port&gt;</code></td><td>UDP port for encrypted peer packet relay.</td><td><code>8444</code></td></tr>
+                                <tr><td><code>--daemon / -d</code></td><td>Detaches process to run in the background.</td><td>Disabled</td></tr>
+                                <tr><td><code>--quiet / -q</code></td><td>Silences stdout console output.</td><td>Disabled</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="notice-box"><strong>Example Custom Launch Command:</strong><br><code>mynet-relay host 100 --port 8443 --data-port 8444 --daemon</code></div>
+                </div>
+                <!-- Firewall -->
+                <div class="guide-section" id="relay-firewall">
+                    <h3><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>5. Firewall Configuration</h3>
+                    <p>Ensure your Linux firewall and VPS cloud security groups allow incoming traffic on ports <strong>8443 TCP</strong> and <strong>8444 UDP</strong>.</p>
+                    <p><strong>UFW (Ubuntu / Debian):</strong></p>
+                    <div class="code-block"><code>sudo ufw allow 8443/tcp comment 'MyNet Control'<br>sudo ufw allow 8444/udp comment 'MyNet Data'<br>sudo ufw reload</code><button class="copy-btn" onclick="copyCode('sudo ufw allow 8443/tcp && sudo ufw allow 8444/udp && sudo ufw reload')">Copy</button></div>
+                    <p><strong>firewalld (RHEL / CentOS / AlmaLinux):</strong></p>
+                    <div class="code-block"><code>sudo firewall-cmd --permanent --add-port=8443/tcp<br>sudo firewall-cmd --permanent --add-port=8444/udp<br>sudo firewall-cmd --reload</code><button class="copy-btn" onclick="copyCode('sudo firewall-cmd --permanent --add-port=8443/tcp && sudo firewall-cmd --permanent --add-port=8444/udp && sudo firewall-cmd --reload')">Copy</button></div>
+                </div>
+                <!-- systemd -->
+                <div class="guide-section" id="relay-systemd">
+                    <h3><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>6. systemd Service Management</h3>
+                    <p><strong>Install Service:</strong></p>
+                    <div class="code-block"><code>sudo mynet-relay install --quiet</code><button class="copy-btn" onclick="copyCode('sudo mynet-relay install --quiet')">Copy</button></div>
+                    <p><strong>Control Service via systemctl:</strong></p>
+                    <div class="code-block"><code>sudo systemctl start mynet-relay<br>sudo systemctl status mynet-relay<br>sudo systemctl restart mynet-relay</code><button class="copy-btn" onclick="copyCode('sudo systemctl status mynet-relay')">Copy</button></div>
+                    <p><strong>Uninstall Service:</strong></p>
+                    <div class="code-block"><code>sudo mynet-relay uninstall</code><button class="copy-btn" onclick="copyCode('sudo mynet-relay uninstall')">Copy</button></div>
+                </div>
+                <!-- Connecting Clients -->
+                <div class="guide-section" id="relay-connecting">
+                    <h3><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>7. Connecting Clients to Your Custom Relay</h3>
+                    <p>Once your relay is running, clients specify your server address when hosting or joining:</p>
+                    <div class="code-block"><code># Host network on custom relay:<br>mynet host relay my-vps.example.com:8443<br><br># Join network on custom relay:<br>mynet join relay ABC123 my-vps.example.com:8443</code><button class="copy-btn" onclick="copyCode('mynet host relay my-vps.example.com:8443')">Copy</button></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                        <span>MyNet</span>
+                    </a>
+                    <p>A zero-config, LAN-style virtual networking tool by CrosMakesGames. Built with Go.<br> <a href="https://crosmakesgames.com">crosmakesgames.com</a></p>
+                </div>
+                <div class="footer-relay-info">
+                    <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>Default Relay Node</h4>
+                    <p>Address: <code>relay-na1.crosmakesgames.com</code></p>
+                    <p>Control Port: <code>8443 TCP</code> | Data Port: <code>8444 UDP</code></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>&copy; 2026 CrosMakesGames. All rights reserved. Released under MIT License.</div>
+                <div class="footer-links">
+                    <a href="#relay-setup">Relay Setup Guide</a>
+                    <a href="https://github.com/crosmakesgames/mynet" target="_blank" rel="noopener">GitHub Repository</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            if (tabName === 'host') { tabs[0].classList.add('active'); document.getElementById('tab-host').classList.add('active'); }
+            else if (tabName === 'join') { tabs[1].classList.add('active'); document.getElementById('tab-join').classList.add('active'); }
+        }
+        function copyCode(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.innerText;
+                btn.innerText = 'Copied!';
+                btn.style.color = '#10b981';
+                setTimeout(() => { btn.innerText = originalText; btn.style.color = ''; }, 2000);
+            }).catch(err => { console.error('Failed to copy: ', err); });
+        }
+    </script>
+</body>
+</html>
